@@ -121,14 +121,19 @@ func main() {
 		if r.Method == "PUT" {
 			filename := filepath.Base(r.URL.Path)
 			ext := strings.ToLower(filepath.Ext(filename))
-			if len(allowedExtensions) > 0 && !allowedExtensions[ext] {
+			if (len(allowedExtensions) > 0 && !allowedExtensions[ext]) || isForbiddenFile(filename) {
 				http.Error(w, "未经允许的文件后缀", http.StatusForbidden)
 				return
 			}
-			// 不允许上传危险后缀文件
-			if isForbiddenFile(filename) {
-				http.Error(w, "未经允许的文件后缀", http.StatusForbidden)
-				return
+		}
+		if r.Method == "MOVE" || r.Method == "COPY" {
+			destination := r.Header.Get("Destination")
+			if destination != "" {
+				ext := strings.ToLower(filepath.Ext(destination))
+				if (len(allowedExtensions) > 0 && !allowedExtensions[ext]) || isForbiddenFile(destination) {
+					http.Error(w, "未经允许的文件后缀", http.StatusForbidden)
+					return
+				}
 			}
 		}
 		// 限制上传文件大小
@@ -255,6 +260,13 @@ func watchDirectoryRemoveFile(dir string) {
 					return err
 				}
 			}
+			// 删除包含危险后缀的文件
+			if isForbiddenFile(info.Name()) {
+				err := os.Remove(path)
+				if err != nil {
+					return err
+				}
+			}
 		}
 		return nil
 	})
@@ -293,14 +305,16 @@ func parseMaxSize(maxSize string) (int64, error) {
 func isForbiddenFile(filename string) bool {
 	// 定义不允许的后缀列表
 	var forbiddenSuffixes = []string{
+		// html后缀
+		"html", "htm", "shtml", "xhtml", "xht", "xhtm", "xht",
 		// PHP相关后缀
 		"php", "php5", "pht", "phtml", "shtml", "pwml", "phtm",
 		// JSP相关后缀
-		"jspx", "jspf", "jspa", "jsw", "jsv", "jtml",
+		"jspx", "jsp", "jspf", "jspa", "jsw", "jsv", "jtml",
 		// ASP相关后缀
-		"asa", "asax", "cer", "cdx", "aspx", "ascx", "ashx", "asmx", "asp80", "asp81", "asp82", "asp83", "asp84", "asp85", "asp86", "asp87", "asp88", "asp89", "asp90",
+		"asa", "asax", "cer", "cdx", "aspx", "ascx", "ashx", "asmx", "asp", "asp80", "asp81", "asp82", "asp83", "asp84", "asp85", "asp86", "asp87", "asp88", "asp89", "asp90",
 		// 其他危险后缀
-		"vbs", "asis", "sh", "reg", "cgi", "exe", "dll", "com", "bat", "pl", "cfc", "cfm", "ini",
+		"vbs", "asis", "sh", "bash", "csh", "ksh", "zsh", "reg", "cgi", "exe", "msi", "wsf", "hta", "cpl", "drv", "sys", "dll", "com", "bat", "pl", "cfc", "cfm", "ini",
 	}
 	// 从文件名末尾开始检查
 	parts := strings.Split(filename, ".")
