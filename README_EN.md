@@ -86,6 +86,21 @@ net use * http://WEBDAV-SERVER/ /user:USERNAME /persistent:YES PASSWORD
 
 Some files may not be uploaded because the `isForbiddenFile()` function in the `main.go` file filters file extensions. This function filters out extensions related to remote execution, malware, or viruses. If you need to modify the list of forbidden extensions, you can edit the `isForbiddenFile()` function accordingly.
 
+#### Filters file extensions
+
+```
+// html
+"html", "htm", "shtml", "xhtml", "xht", "xhtm",
+// PHP
+"php", "php5", "pht", "phtml", "shtml", "pwml", "phtm",
+// JSP
+"jspx", "jsp", "jspf", "jspa", "jsw", "jsv", "jtml",
+// ASP
+"asa", "asax", "cer", "cdx", "aspx", "ascx", "ashx", "asmx", "asp", "asp80", "asp81", "asp82", "asp83", "asp84", "asp85", "asp86", "asp87", "asp88", "asp89", "asp90",
+// other
+"vbs", "asis", "sh", "bash", "csh", "ksh", "zsh", "reg", "cgi", "exe", "msi", "wsf", "hta", "cpl", "drv", "sys", "dll", "com", "bat", "pl", "cfc", "cfm", "ini",
+```
+
 ## Security Considerations
 
 - **Self-Signed Certificates**: When SSL is enabled and certificate files are not found, the program generates a self-signed certificate. This is suitable for testing but not recommended for production environments.
@@ -97,4 +112,4 @@ Contributions are welcome! Feel free to submit pull requests or open issues.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.

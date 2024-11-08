@@ -86,6 +86,21 @@ net use * http://WEBDAV-SERVER/ /user:USERNAME /persistent:YES PASSWORD
 
 某些文件可能无法上传,因为`main.go`文件中的`isForbiddenFile()`函数对文件扩展名进行了过滤.该函数过滤了一些与远程执行、恶意软件或病毒相关的文件扩展名.如果需要修改禁止的扩展名列表,可以相应地编辑`isForbiddenFile()`函数.
 
+#### 默认限制的文件后缀
+
+```
+// html后缀
+"html", "htm", "shtml", "xhtml", "xht", "xhtm",
+// PHP相关后缀
+"php", "php5", "pht", "phtml", "shtml", "pwml", "phtm",
+// JSP相关后缀
+"jspx", "jsp", "jspf", "jspa", "jsw", "jsv", "jtml",
+// ASP相关后缀
+"asa", "asax", "cer", "cdx", "aspx", "ascx", "ashx", "asmx", "asp", "asp80", "asp81", "asp82", "asp83", "asp84", "asp85", "asp86", "asp87", "asp88", "asp89", "asp90",
+// 其他危险后缀
+"vbs", "asis", "sh", "bash", "csh", "ksh", "zsh", "reg", "cgi", "exe", "msi", "wsf", "hta", "cpl", "drv", "sys", "dll", "com", "bat", "pl", "cfc", "cfm", "ini",
+```
+
 ## 安全考虑
 
 - **自签名证书**: 当启用SSL且未找到证书文件时,程序会生成自签名证书.这适用于测试,但不推荐用于生产环境.
@@ -97,5 +112,5 @@ net use * http://WEBDAV-SERVER/ /user:USERNAME /persistent:YES PASSWORD
 
 ## 许可证
 
-本项目采用MIT许可证.详见[LICENSE](LICENSE)文件.
+本项目采用MIT许可证.
 

@@ -159,10 +159,13 @@ func main() {
 			}
 			r.Body = newBody
 		}
+		// 只针对PUT、COPY、MOVE操作监听文件，避免过多IO操作
+		if r.Method == "PUT" || r.Method == "COPY" || r.Method == "MOVE" {
+			watchDirectoryRemoveFile(absPath)
+		}
 		// 处理WebDAV请求
 		if r.Body != nil {
 			handler.ServeHTTP(w, r)
-			watchDirectoryRemoveFile(absPath)
 		}
 	})
 
@@ -306,7 +309,7 @@ func isForbiddenFile(filename string) bool {
 	// 定义不允许的后缀列表
 	var forbiddenSuffixes = []string{
 		// html后缀
-		"html", "htm", "shtml", "xhtml", "xht", "xhtm", "xht",
+		"html", "htm", "shtml", "xhtml", "xht", "xhtm",
 		// PHP相关后缀
 		"php", "php5", "pht", "phtml", "shtml", "pwml", "phtm",
 		// JSP相关后缀
