@@ -126,6 +126,7 @@ func main() {
 				return
 			}
 		}
+		// 检查用户修改文件后缀是否符合规范
 		if r.Method == "MOVE" || r.Method == "COPY" {
 			destination := r.Header.Get("Destination")
 			if destination != "" {
